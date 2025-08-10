@@ -22,10 +22,6 @@ def forward_model(magic_const,te,ti,vi,psf,freqs,ils):
             if ((i-j+zidx) > 0) and ((i-j+zidx)<n_freq):
                 conv_spec[i]+=psf[i-j+zidx]*real_spec[j]
     return(magic_const*conv_spec)
-#    plt.plot(magic_const*conv_spec)
- #   plt.plot(real_spec)
-  #  plt.show()
-
 
 ils=il.ilint(fname="ion_line_interpolate_32_16_430_00.h5")
 
@@ -61,13 +57,16 @@ def ss(x):
     return(n.sum(n.abs(model-spec/n.max(spec))**2))
 
 x=so.fmin(ss,[1.5,4200,1400,0])
+#best_fit=forward_model(x)
 print(x)
 
 model=forward_model(x[0],x[1],x[2],x[3],rpsf,freq,ils)
 
+meas=spec/n.max(spec)
 
-plt.plot(freq,spec/n.max(spec),"x")
+plt.plot(freq,meas,"x")
 plt.plot(freq,model)
+plt.title(r"$T_e=%1.0f$ K $T_i=%1.0f$ K $v_i=%1.0f$ m/s"%(x[1],x[2],x[3]))
 plt.xlim([-20e3,20e3])
 plt.xlabel("Doppler (kHz)")
 plt.show()
