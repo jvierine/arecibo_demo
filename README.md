@@ -19,7 +19,24 @@ Test that you can read the data:
 > ipython3 
 > import digital_rf as drf
 # path to data is to directory where you untarred arecibo_snippet..tar.gz 
-> d=drf.DigitalRFReader("
+> d=drf.DigitalRFReader("./arecibo_snippet")
+> print(d.get_channels())
+["ch"]
+> b=d.get_bounds("ch")
+> # print first and last sample index (samples since 1970)
+> print(b)
+(36574175850000000, 36574176499999999)
+> # read one 10 ms ipp of daa (25 MHz sample-rate) 
+> z=d.read_vector_c81d(b[0],250000,"ch")
+> # plot it
+> import matplotlib.pyplot as plt
+> plt.plot(z.real)
+> plt.plot(z.imag)
+> plt.show()
+
+You should get something like this:
+
+<img width="584" height="421" alt="Screenshot 2025-08-13 at 10 27 51" src="https://github.com/user-attachments/assets/4854a6bd-ca5e-4af2-adee-5c69fb8f52e0" />
 
 
 Vierinen, J. (2025). 20 seconds of Arecibo 430 MHz carriage house ionospheric radar raw voltage data sampled at 25 MHz sample-rate [Data set]. Zenodo. https://doi.org/10.5281/zenodo.16780141
