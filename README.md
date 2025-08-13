@@ -6,6 +6,10 @@ In order to follow the demo, install digital_rf
 
 > pip install digital_rf
 
+Get the code for the demo
+
+> git clone git@github.com:jvierine/arecibo_demo.git
+
 Download 20 seconds of 25 MHz Arecibo raw voltage
 
 Navigate to https://zenodo.org/records/16780141 and download arecibo_snippet.tar.gz
