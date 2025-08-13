@@ -16,9 +16,10 @@ Untar the data:
 
 Test that you can read the data:
 
+<code>
 > ipython3 
 > import digital_rf as drf
-# path to data is to directory where you untarred arecibo_snippet..tar.gz 
+> # path to data is to directory where you untarred arecibo_snippet.tar.gz
 > d=drf.DigitalRFReader("./arecibo_snippet")
 > print(d.get_channels())
 ["ch"]
@@ -33,7 +34,7 @@ Test that you can read the data:
 > plt.plot(z.real)
 > plt.plot(z.imag)
 > plt.show()
-
+</code>
 You should get something like this:
 
 <img width="584" height="421" alt="Screenshot 2025-08-13 at 10 27 51" src="https://github.com/user-attachments/assets/4854a6bd-ca5e-4af2-adee-5c69fb8f52e0" />
