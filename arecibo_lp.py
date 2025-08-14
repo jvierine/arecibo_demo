@@ -6,6 +6,8 @@ import scipy.signal.windows as sw
 import scipy.signal as ss
 
 import arecibo_lib as al    
+import h5py
+
 
 
 
@@ -80,11 +82,20 @@ for i in range(n_ipp):
         spectrums[0,:,ri] += n.abs(n.fft.fftshift(n.fft.fft(z_tx*echo,fft_length)))**2.0            
         
 
-    if i%100 == 99:
+    if i%1000 == 500:
         fidx=n.where(n.abs(doppler_freq/1e3)<100)[0]
         spectrums2=n.copy(spectrums)
-#        for ri in range(n_rg):
- #           spectrums2[0,:,ri]=spectrums2[0,:,ri]-spectrums2[0,:,-1]
+        #        for ri in range(n_rg):
+        #           spectrums2[0,:,ri]=spectrums2[0,:,ri]-spectrums2[0,:,-1]
+        ri=n.argmin(n.abs(range_gates/1e3-230))
+        plt.plot(doppler_freq[fidx],spectrums2[0,fidx,ri],".")
+        plt.show()
+        ho=h5py.File("isr_spec_meas.h5","w")
+        ho["spec"]=spectrums2[0,fidx,ri]
+        ho["doppler_freq"]=doppler_freq[fidx]
+        ho.close()
+
+ 
         plt.pcolormesh(doppler_freq[::100]/1e3,range_gates/1e3,10.0*n.log10(n.abs(spectrums2[0,::100,:].T)))
         plt.colorbar()
         plt.show()

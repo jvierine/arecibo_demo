@@ -67,9 +67,6 @@ for i in range(n_ipp):
     coded_pulse=al.is_coded(z_tx)
     print("%d/%d coded %d"%(i,n_ipp,coded_pulse))
     print(coded_pulse)
-    plt.plot(z_tx.real)
-    plt.plot(z_tx.imag)
-    plt.show()
     if coded_pulse:
         if rank==1:
             r_clp.add_tx(z_tx)
