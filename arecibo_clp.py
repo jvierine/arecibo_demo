@@ -52,6 +52,7 @@ idxmat,range_gates=idx_array(txlen=pulse_length)
 
 n_rg=len(range_gates)
 S=n.zeros([n_rg,fft_length],dtype=n.float32)
+sum_of_weights=n.zeros(n_rg,dtype=n.float32)
 
 for i in range(n_ipp):
     print("%d/%d"%(i,n_ipp))
@@ -62,11 +63,17 @@ for i in range(n_ipp):
     
     # decode and build matrix with echoes of each range gate on each row
     Z=z[idxmat]*z_tx[None,:]
-    S+=n.abs(n.fft.fftshift(sfft.fft(Z,fft_length,axis=1,workers=48),axes=1))**2.0
+    #weight=n.sum(n.real(Z*n.conj(Z)),axis=1)/1e15
+    weight=n.max(n.real(Z*n.conj(Z)),axis=1)/1e15
+#    plt.plot(weight)
+ #   plt.show()
+    S+=(1/weight[:,None])*n.abs(n.fft.fftshift(sfft.fft(Z,fft_length,axis=1,workers=48),axes=1))**2.0
+    sum_of_weights+=1/weight
     
     if i%100 == 99:
         # median filter is approximately the self noise and background noise
         Sl = n.copy(S)
+        Sl=Sl/sum_of_weights[:,None]
         for ri in range(n_rg):
             print("%d/%d"%(ri,n_rg))
             Sl[ri,:]=S[ri,:]-ss.medfilt(S[ri,:],31)

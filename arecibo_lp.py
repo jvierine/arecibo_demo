@@ -91,7 +91,8 @@ for i in range(n_ipp):
         plt.plot(doppler_freq[fidx],spectrums2[0,fidx,ri],".")
         plt.show()
         ho=h5py.File("isr_spec_meas.h5","w")
-        ho["spec"]=spectrums2[0,fidx,ri]
+        ho["spec"]=spectrums2[0,fidx,:]
+        ho["range_gates"]=range_gates/1e3
         ho["doppler_freq"]=doppler_freq[fidx]
         ho.close()
 
