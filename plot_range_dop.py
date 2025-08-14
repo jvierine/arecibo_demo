@@ -16,8 +16,16 @@ def plot_ambiguity(fname="clp_rda.h5",title="Coded long pulse",xlim=[-1,1]):
     plt.ylabel("Range (km)")
     plt.title("%s Range-Doppler ambiguity"%(title))
     plt.show()
-    h.close()
 
+    rpsf=n.sum(h["psf"][()].T,axis=0)
+    rpsf=rpsf/n.max(rpsf)
+    plt.plot(dops,10.0*n.log10(rpsf))
+    plt.title("%s reduced Doppler ambiguity"%(title))
+    plt.ylabel("Power (dB)")
+    plt.xlabel("Doppler (MHz)")
+    plt.show()
+    
+    h.close()
 
 plot_ambiguity(fname="clp_rda.h5",title="Coded long pulse",xlim=[-1,1])
 plot_ambiguity(fname="lp_rda.h5",title="Uncoded long pulse",xlim=[-0.1,0.1])

@@ -26,7 +26,7 @@ class range_dop_amb:
         
         self.fvec=n.fft.fftshift(n.fft.fftfreq(self.fftlen,d=1/self.sample_rate))
         self.rvec=(self.rgs/self.sample_rate)*sc.c/2/1e3
-        self.P=n.zeros([self.fftlen,self.n_rg],dtype=n.float64)
+        self.P=n.zeros([self.fftlen,self.n_rg],dtype=n.float128)
         
     def add_tx(self,z_tx):
         """
@@ -34,7 +34,7 @@ class range_dop_amb:
         """
         z_tx=z_tx/n.sqrt(n.sum(n.abs(z_tx)**2.0))
         self.echo[(self.txlen-1):(self.txlen+self.txlen-1)]=z_tx
-    
+        
         for i in range(len(self.rgs)):
             self.P[:,i]+=n.abs(n.fft.fftshift(n.fft.fft(self.echo[(self.rgs[i]+self.txlen):(self.rgs[i]+self.txlen+self.txlen)]*n.conj(z_tx),self.fftlen)))**2.0
         self.n_tx+=1
@@ -44,6 +44,7 @@ class range_dop_amb:
         return(self.P/self.n_tx)
 
     def save(self,fname="clp.h5"):
+        print(n.max(self.P/self.n_tx))
         ho=h5py.File(fname,"w")
         ho["psf"]=n.array(self.P/self.n_tx,dtype=n.float32)
         ho["doppler"]=self.fvec
