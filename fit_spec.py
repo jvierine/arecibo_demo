@@ -4,13 +4,14 @@ import numpy as n
 import scipy.optimize as so
 import il_interp as il
 
-def forward_model(magic_const,te,ti,vi,psf,freqs,ils):
+def forward_model(magic_const,te,ti,vi,noise,psf,freqs,ils):
     """
     simple ambiguity function that assumes zero range gradient in plasma-parameters, 
     only taking into account doppler broadening
     """
     n_freq=len(freqs)
     specf=ils.getspec(ne=n.array([1e11]),
+                      mol_frac=n.array([0.95]),
                       te=n.array([te]),ti=n.array([ti]),vi=n.array([vi]),acf=False,interpf=True)[0]
     real_spec=specf(freqs)
     conv_spec=n.zeros(n_freq)
@@ -21,9 +22,9 @@ def forward_model(magic_const,te,ti,vi,psf,freqs,ils):
         for j in range(n_freq):
             if ((i-j+zidx) > 0) and ((i-j+zidx)<n_freq):
                 conv_spec[i]+=psf[i-j+zidx]*real_spec[j]
-    return(magic_const*conv_spec)
+    return(magic_const*conv_spec+noise)
 
-ils=il.ilint(fname="ion_line_interpolate_32_16_430_00.h5")
+ils=il.ilint(fname="ion_line_interpolate_16_1_430_00.h5")
 
 hrd=h5py.File("lp_rda.h5","r")
 psf=hrd["psf"][()]
@@ -48,27 +49,21 @@ spec=spec[:,ri]
 #plt.plot(spec)
 #plt.show()
 
-S=ils.getspec(ne=n.array([1e11]),
-              te=n.array([2000]),
-              ti=n.array([1500]),
-              mol_frac=n.array([0]),
-              vi=n.array([0]),
-              acf=False,
-              interpf=True
-              )
+meas=spec/n.max(spec)
+#model=forward_model(2,x[1],x[2],x[3],rpsf,freq,ils)
 
 def ss(x):
     #    model=forward_model(1.5,4200,1400,0,rpsf,freq,ils)
-    model=forward_model(x[0],x[1],x[2],x[3],rpsf,freq,ils)
+    model=forward_model(x[0],x[1],x[2],x[3],x[4],rpsf,freq,ils)
     return(n.sum(n.abs(model-spec/n.max(spec))**2))
 
-x=so.fmin(ss,[2,4200,1400,0])
+x=so.fmin(ss,[2,4200,1400,0,0.05])
 #best_fit=forward_model(x)
 print(x)
 
-model=forward_model(x[0],x[1],x[2],x[3],rpsf,freq,ils)
+model=forward_model(x[0],x[1],x[2],x[3],x[4],rpsf,freq,ils)
 
-meas=spec/n.max(spec)
+
 
 plt.plot(freq,meas,"x")
 plt.plot(freq,model)
