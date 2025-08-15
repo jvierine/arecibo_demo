@@ -4,8 +4,11 @@ The demo comes with 20 seconds of Arecibo Observatory 430 MHz raw voltage data s
 
 In order to follow the demo, install digital_rf
 
-# pip3
 > pip install digital_rf
+
+or alternatively pip3 if pip is not available
+
+> pip3 install digital_rf
 
 Get the code for the demo
 
